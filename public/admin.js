@@ -173,6 +173,18 @@
       btn('PST', 'Postponed') + btn('CANC', 'Cancelled') + btn('NS', 'Not started');
   }
 
+  function autoNote(m) {
+    const mode = m.autoMode || 'start';
+    const at = new Date(m.kickoff).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
+    if (mode === 'off') return '';
+    if (mode === 'full' && m.sport === 'football') {
+      const a1 = m.autoAdded1 ?? 2, a2 = m.autoAdded2 ?? 4;
+      return `<div class="auto-note"><b>Automatic match.</b> Kicks off ${esc(at)}, half time after 45+${a1}', 15-minute break, full time after 90+${a2}'. Add goals and cards as they happen. Pressing a status button switches this match to manual.</div>`;
+    }
+    if (m.status === 'NS') return `<div class="auto-note"><b>Starts automatically</b> at ${esc(at)}. Use the buttons below for half time and full time.</div>`;
+    return '';
+  }
+
   function renderLive() {
     const m = current();
     const el = $('#liveSect');
@@ -194,6 +206,7 @@
             ${m.pens ? `<div class="hint">Pens ${m.pens.home} - ${m.pens.away}</div>` : ''}</div>
           ${side('away')}
         </div>
+        ${autoNote(m)}
         <div class="status-row">${statusButtons(m)}</div>
         <form class="inline" id="minuteForm">
           <label class="f narrow"><span>Set minute</span><input type="number" name="minute" min="1" max="200" placeholder="${esc(minuteOf(m)?.elapsed ?? '')}"></label>
@@ -300,6 +313,13 @@
             ${inp('country', 'Country / region name', d.country)}
             ${inp('round', 'Round (optional)', d.round)}
             ${inp('competitionLogo', 'Competition logo URL (optional)', d.competitionLogo)}
+            <label class="f full"><span>Automatic start</span><select name="autoMode">
+              <option value="start" ${(d.autoMode || 'start') === 'start' ? 'selected' : ''}>Start automatically at kick-off time (you control the rest)</option>
+              <option value="full" ${d.autoMode === 'full' ? 'selected' : ''}>Run the whole match automatically: 1st half, 15 min break, 2nd half, full time (football)</option>
+              <option value="off" ${d.autoMode === 'off' ? 'selected' : ''}>Manual: I press Kick off myself</option>
+            </select></label>
+            <label class="f" data-auto-full><span>Added time, 1st half (minutes)</span><input type="number" name="autoAdded1" min="0" max="15" value="${esc(d.autoAdded1 ?? 2)}"></label>
+            <label class="f" data-auto-full><span>Added time, 2nd half (minutes)</span><input type="number" name="autoAdded2" min="0" max="15" value="${esc(d.autoAdded2 ?? 4)}"></label>
             ${inp('venue', 'Venue (optional)', d.venue)}
             ${inp('referee', 'Referee (optional)', d.referee)}
             ${m ? `
@@ -316,6 +336,9 @@
 
   function bindDetails(m) {
     const form = $('#detForm');
+    const syncAuto = () => form.querySelectorAll('[data-auto-full]').forEach((el) => { el.hidden = form.autoMode.value !== 'full'; });
+    form.autoMode.addEventListener('change', syncAuto);
+    syncAuto();
     form.querySelectorAll('[data-flag]').forEach((sel) => sel.addEventListener('change', () => {
       sel.previousElementSibling.outerHTML = flagImg(sel.value);
       if (sel.name === 'competitionFlag' && sel.value && !form.country.value.trim()) {
@@ -332,6 +355,7 @@
         away: { name: v('away_name'), logo: v('away_logo'), flag: v('away_flag') },
         competition: v('competition') || 'Friendly', competitionFlag: v('competitionFlag'), country: v('country'), round: v('round'),
         competitionLogo: v('competitionLogo'), venue: v('venue'), referee: v('referee'),
+        autoMode: v('autoMode'), autoAdded1: v('autoAdded1'), autoAdded2: v('autoAdded2'),
       };
       if (m) body.pens = { home: v('pens_home'), away: v('pens_away') };
       try {
@@ -395,6 +419,19 @@
     }
   });
   $('#logout').addEventListener('click', logout);
+
+  // Pick up automatic kick-offs / half time / full time without touching forms being typed in.
+  setInterval(async () => {
+    if (document.hidden || state.view !== 'matches' || !state.user || state.sel === 'new') return;
+    try {
+      const before = current()?.status;
+      const { matches } = await api('GET', 'matches');
+      state.matches = matches;
+      renderList();
+      const now = current();
+      if (now && now.status !== before) { renderLive(); toast(`${now.home.name} v ${now.away.name}: ${STATUS_TEXT[now.status] || now.status}`); }
+    } catch { /* offline; next tick */ }
+  }, 20000);
 
   setInterval(() => {
     for (const el of document.querySelectorAll('[data-clock]')) {
