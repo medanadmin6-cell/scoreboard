@@ -1246,6 +1246,7 @@
     m.league.pin = 0;
     m.league.standings = false;
     if (c.liveLabel) m.customLabel = c.liveLabel;
+    else if (c.sport !== 'football' && !c.clock) m.customLabel = 'Live';
     return m;
   }
 

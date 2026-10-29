@@ -61,11 +61,12 @@
     return cap && e > cap ? { elapsed: cap, extra: e - cap } : { elapsed: e, extra: null };
   }
   const fmtMin = (t) => t ? `${t.elapsed}${t.extra ? '+' + t.extra : ''}'` : '';
+  const isAuto = (m) => (m.autoMode ? m.autoMode !== 'off' : !m.id || m.status === 'NS');
 
   function shortStatus(m) {
     if (m.status === 'NS') return new Date(m.kickoff).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
     if (m.liveLabel && LIVE.has(m.status)) return m.liveLabel;
-    if (['1H', '2H', 'ET'].includes(m.status)) return fmtMin(minuteOf(m));
+    if (['1H', '2H', 'ET'].includes(m.status)) return fmtMin(minuteOf(m)) || 'Live';
     return { HT: 'HT', BT: 'ET HT', P: 'Pens', PST: 'Postp.', CANC: 'Canc.', PEN: 'Pen', SUSP: 'Susp.', INT: 'Int.', ABD: 'Aband.' }[m.status] || m.status;
   }
 
@@ -174,15 +175,12 @@
   }
 
   function autoNote(m) {
-    const mode = m.autoMode || 'start';
+    if (!isAuto(m)) return '';
     const at = new Date(m.kickoff).toLocaleString([], { weekday: 'short', day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit', hour12: false });
-    if (mode === 'off') return '';
-    if (mode === 'full' && m.sport === 'football') {
-      const a1 = m.autoAdded1 ?? 2, a2 = m.autoAdded2 ?? 4;
-      return `<div class="auto-note"><b>Automatic match.</b> Kicks off ${esc(at)}, half time after 45+${a1}', 15-minute break, full time after 90+${a2}'. Add goals and cards as they happen. Pressing a status button switches this match to manual.</div>`;
-    }
-    if (m.status === 'NS') return `<div class="auto-note"><b>Starts automatically</b> at ${esc(at)}. Use the buttons below for half time and full time.</div>`;
-    return '';
+    const plan = m.sport === 'football'
+      ? `Kicks off ${esc(at)}, half time after 45+${m.autoAdded1 ?? 2}', 15-minute break, full time after 90+${m.autoAdded2 ?? 4}'.`
+      : `Goes live at ${esc(at)} and is marked finished 3½ hours later.`;
+    return `<div class="auto-note"><b>Automatic clock.</b> ${plan} Add goals and cards as they happen. Pressing any status button below switches this match to manual.</div>`;
   }
 
   function renderLive() {
@@ -313,10 +311,9 @@
             ${inp('country', 'Country / region name', d.country)}
             ${inp('round', 'Round (optional)', d.round)}
             ${inp('competitionLogo', 'Competition logo URL (optional)', d.competitionLogo)}
-            <label class="f full"><span>Automatic start</span><select name="autoMode">
-              <option value="start" ${(d.autoMode || 'start') === 'start' ? 'selected' : ''}>Start automatically at kick-off time (you control the rest)</option>
-              <option value="full" ${d.autoMode === 'full' ? 'selected' : ''}>Run the whole match automatically: 1st half, 15 min break, 2nd half, full time (football)</option>
-              <option value="off" ${d.autoMode === 'off' ? 'selected' : ''}>Manual: I press Kick off myself</option>
+            <label class="f full"><span>Match clock</span><select name="autoMode">
+              <option value="auto" ${isAuto(d) ? 'selected' : ''}>Automatic: starts at kick-off, half time, 2nd half and full time by itself</option>
+              <option value="off" ${isAuto(d) ? '' : 'selected'}>Manual: I press Kick off, Half time and Full time myself</option>
             </select></label>
             <label class="f" data-auto-full><span>Added time, 1st half (minutes)</span><input type="number" name="autoAdded1" min="0" max="15" value="${esc(d.autoAdded1 ?? 2)}"></label>
             <label class="f" data-auto-full><span>Added time, 2nd half (minutes)</span><input type="number" name="autoAdded2" min="0" max="15" value="${esc(d.autoAdded2 ?? 4)}"></label>
@@ -336,8 +333,9 @@
 
   function bindDetails(m) {
     const form = $('#detForm');
-    const syncAuto = () => form.querySelectorAll('[data-auto-full]').forEach((el) => { el.hidden = form.autoMode.value !== 'full'; });
+    const syncAuto = () => form.querySelectorAll('[data-auto-full]').forEach((el) => { el.hidden = form.autoMode.value !== 'auto' || form.sport.value !== 'football'; });
     form.autoMode.addEventListener('change', syncAuto);
+    form.sport.addEventListener('change', syncAuto);
     syncAuto();
     form.querySelectorAll('[data-flag]').forEach((sel) => sel.addEventListener('change', () => {
       sel.previousElementSibling.outerHTML = flagImg(sel.value);
