@@ -1,0 +1,15 @@
+{
+  "name": "scorenest",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Live scores website with an admin panel for hand-entered matches",
+  "engines": {
+    "node": ">=22.5"
+  },
+  "scripts": {
+    "start": "node server.js"
+  },
+  "dependencies": {
+    "pg": "8.13.1"
+  }
+}
