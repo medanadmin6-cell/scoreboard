@@ -36,6 +36,9 @@ create table if not exists public.sn_activity (
   summary text not null
 );
 
+grant select, insert, update, delete on public.sn_admins, public.sn_matches, public.sn_activity to service_role;
+grant usage, select on sequence public.sn_admins_id_seq, public.sn_activity_id_seq to service_role;
+
 alter table public.sn_admins enable row level security;
 alter table public.sn_matches enable row level security;
 alter table public.sn_activity enable row level security;
