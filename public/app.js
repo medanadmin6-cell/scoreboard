@@ -36,6 +36,8 @@
   const fromYmd = (s) => new Date(+s.slice(0, 4), +s.slice(4, 6) - 1, +s.slice(6, 8));
   const addDays = (d, n) => { const x = new Date(d); x.setDate(x.getDate() + n); return x; };
   const todayStr = () => ymd(new Date());
+  const ET_FMT = new Intl.DateTimeFormat('en-CA', { timeZone: 'America/New_York', year: 'numeric', month: '2-digit', day: '2-digit' });
+  const espnDay = (t) => ET_FMT.format(t).replace(/\D/g, '');
   const timeStr = (d) => d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit', hour12: false });
   const shortDate = (d) => d.toLocaleDateString([], { day: 'numeric', month: 'short' });
 
@@ -108,9 +110,17 @@
 
   async function leagueDay(sportKey, slug, day) {
     const sp = sportOf(sportKey);
-    const d = fromYmd(day);
-    const range = `${ymd(addDays(d, -1))}-${ymd(addDays(d, 1))}`;
-    const data = await getJSON(`${SITE_API}/${sp.espn}/${slug}/scoreboard?dates=${range}&limit=300`);
+    // ESPN days are US Eastern and it rejects date ranges, so fetch each Eastern day that
+    // overlaps the visitor's local day and merge.
+    const start = fromYmd(day);
+    const end = new Date(addDays(start, 1).getTime() - 1);
+    const dates = [...new Set([espnDay(start), espnDay(end)])];
+    const pages = await Promise.all(dates.map((ds) => getJSON(`${SITE_API}/${sp.espn}/${slug}/scoreboard?dates=${ds}&limit=300`)));
+    const seen = new Set();
+    const data = {
+      leagues: pages[0]?.leagues,
+      events: pages.flatMap((p) => p.events || []).filter((e) => !seen.has(e.id) && seen.add(e.id)),
+    };
     const cfg = leagueCfg(sportKey, slug);
     const league = {
       slug,
