@@ -1,4 +1,4 @@
-[hidden] { display: none !important; }
+﻿[hidden] { display: none !important; }
 .auto-note { margin: 0 16px 14px; padding: 10px 12px; border-radius: 8px; background: var(--panel-2); font-size: 13px; }
 .auto-note b { color: var(--accent); }
 .admin-tag { font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .8px; background: var(--panel-2); color: var(--muted); padding: 3px 8px; border-radius: 6px; margin-left: 4px; }
@@ -6,7 +6,7 @@
 .whoami { color: var(--muted); font-weight: 600; font-size: 13px; margin-right: 4px; }
 .adm-nav { display: flex; gap: 4px; overflow-x: auto; scrollbar-width: none; }
 .adm-nav::-webkit-scrollbar { display: none; }
-.adm-nav a { padding: 8px 14px; border-radius: 999px; color: var(--muted); font-weight: 600; white-space: nowrap; }
+.adm-nav a { padding: 8px 14px; border-radius: 6px; color: var(--muted); font-weight: 600; white-space: nowrap; }
 .adm-nav a:hover { color: var(--text); }
 .adm-nav a.on { background: var(--panel-2); color: var(--text); }
 .page { max-width: 860px; margin: 0 auto; padding: 16px; }
@@ -38,7 +38,7 @@
 .list-head { display: flex; align-items: center; justify-content: space-between; padding: 14px 16px; }
 .list-head b { font-size: 15px; }
 .chips { display: flex; gap: 6px; padding: 0 16px 12px; flex-wrap: wrap; }
-.chip { padding: 5px 12px; border-radius: 999px; background: var(--panel-2); color: var(--muted); font-size: 12px; font-weight: 700; }
+.chip { padding: 5px 12px; border-radius: 6px; background: var(--panel-2); color: var(--muted); font-size: 12px; font-weight: 700; }
 .chip.on { background: var(--text); color: #000; }
 .mlist { max-height: calc(100vh - 220px); overflow-y: auto; }
 .mi { display: grid; grid-template-columns: 54px 1fr auto; gap: 10px; align-items: center; padding: 10px 16px; border-top: 1px solid var(--line); cursor: pointer; }

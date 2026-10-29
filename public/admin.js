@@ -238,7 +238,7 @@
     const evs = (m.events || []).slice().sort((a, b) => (b.elapsed - a.elapsed) || ((b.extra || 0) - (a.extra || 0)));
     el.innerHTML = `
       <section class="sect">
-        <div class="sect-h"><span>Add goal, card or substitution</span><span>Now: ${esc(fmtMin(minuteOf(m)) || '—')}</span></div>
+        <div class="sect-h"><span>Add goal, card or substitution</span><span>${minuteOf(m) ? `Now: ${esc(fmtMin(minuteOf(m)))}` : 'Not live'}</span></div>
         <form class="sect-b" id="evForm">
           <div class="grid">
             <label class="f"><span>Event</span><select name="type">${Object.entries(EV_LABEL).map(([k, l]) => `<option value="${k}" ${k === t ? 'selected' : ''}>${l}</option>`).join('')}</select></label>

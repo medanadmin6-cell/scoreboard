@@ -223,9 +223,12 @@
     $('#sideRight').innerHTML = `
       ${featuredHTML(pick)}
       <div class="panel" id="miniTable"></div>
-      <div class="panel promo">
-        <b>${esc(SITE.name)}</b>
-        Every goal, every result, in real time. Tap the star on any match to follow it in Favourites.
+      <div class="panel">
+        <div class="panel-h">Using ${esc(SITE.name)}</div>
+        <div class="tip">
+          <p>Tap the star next to a match to save it under Favourites. Favourites are kept on this device only.</p>
+          <p>Scores refresh every 30 seconds. Kick-off times are shown in your own time zone.</p>
+        </div>
       </div>`;
     const sp = sportOf(route.sport);
     const top = sp.leagues[0];

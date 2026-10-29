@@ -2,6 +2,8 @@
 window.SITE = {
   name: 'ScoreNest',
   tagline: 'Live scores, fixtures, results and tables',
+  // Shown on the Terms and Privacy pages. Leave empty to hide.
+  contactEmail: '',
   refreshMs: 30000,
 
   sports: {

@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Privacy Policy</title>
+  <meta name="description" content="How this live scores site handles your information.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <meta name="theme-color" content="#000000">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="topbar-in">
+      <a class="brand" href="/">
+        <span class="brand-mark" aria-hidden="true"><svg viewBox="0 0 32 32"><rect width="32" height="32" rx="8"/><path d="M9 21l5-10 4 7 2-3 3 6"/></svg></span>
+        <span class="brand-name" data-brand></span>
+      </a>
+    </div>
+  </header>
+
+  <main class="legal">
+    <a class="back" href="/">&lsaquo; Back to scores</a>
+    <h1>Privacy Policy</h1>
+    <p class="muted">Last updated 29 October 2026</p>
+
+    <p>This page explains what information <span data-brand></span> handles when you use the site, and why. The short version: you can follow scores without an account, we do not run ads or tracking scripts, and we do not sell anyone's information.</p>
+
+    <h2>Visiting the site</h2>
+    <p>You do not need an account to read scores. We do not set advertising or analytics cookies.</p>
+    <p>Matches you mark with the star are saved as Favourites in your browser's local storage, on your device only. We never receive that list. Clearing your browser's site data removes it.</p>
+    <p>Like most websites, our hosting provider (Vercel) keeps short-lived server logs, such as your IP address, browser type and the pages requested. These are used to keep the site running and secure.</p>
+
+    <h2>Other services the page loads</h2>
+    <p>To show the site, your browser loads a few files directly from other services, which then see your IP address the same way any website you visit does:</p>
+    <ul>
+      <li>Google Fonts, for the typeface.</li>
+      <li>Image servers of our sports data providers (API-Football and ESPN), for team and competition logos.</li>
+      <li>flagcdn.com, for country flags.</li>
+    </ul>
+    <p>Scores, fixtures and tables are fetched by our own server from API-Football and ESPN. Your browser does not send them any personal information for this.</p>
+
+    <h2>Admin accounts</h2>
+    <p>People who manage matches on the site have an admin account. For those accounts we store the username, an optional display name, the role, sign-in times and a log of the changes they make. Passwords are stored only as a one-way hash, never in readable form. This information is kept in our database, hosted by Supabase, and is used only to run the admin area.</p>
+    <p>When an admin signs in, a sign-in token is kept in that browser's local storage until they sign out or it expires after 7 days.</p>
+
+    <h2>Your choices</h2>
+    <p>You can clear Favourites at any time by clearing this site's data in your browser. Admins can ask an owner to remove their account, which also stops their sign-in from working.</p>
+
+    <h2>Changes</h2>
+    <p>If we change how the site handles information, we will update this page and the date at the top.</p>
+
+    <h2>Contact</h2>
+    <p data-contact-line>Questions about this policy can be sent to <a data-contact href="#"></a>.</p>
+    <p data-no-contact>Questions about this policy can be sent to the site owner.</p>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-in">
+      <div class="muted">&copy; <span id="year"></span> <span data-brand></span> &middot; <a class="flink" href="/terms">Terms</a> &middot; <a class="flink" href="/privacy">Privacy</a></div>
+    </div>
+  </footer>
+  <script src="/config.js"></script>
+  <script src="/legal.js"></script>
+</body>
+</html>

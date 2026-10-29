@@ -1,4 +1,4 @@
-# ScoreNest — live scores site
+# ScoreNest: live scores site
 
 A LiveScore-style live scores website: football, basketball, hockey, American football and baseball.
 Live scores, fixtures and results by date, match pages (key events, stats, line-ups on a pitch, table,
