@@ -1,3 +1,7 @@
 .env
 data/
 node_modules/
+*.mp4
+*.MP4
+*.mov
+*.MOV
